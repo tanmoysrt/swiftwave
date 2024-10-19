@@ -138,10 +138,10 @@ func (m Manager) SSLProxyUpdate(request SSLProxyUpdateRequest, ctx context.Conte
 	if domain.IsIPv4() {
 		return nil
 	}
-  // If domain doesn't have SSL, return
-  if domain.SSLStatus == core.DomainSSLStatusNone || strings.Compare(domain.SSLFullChain, "") == 0 || strings.Compare(domain.SSLPrivateKey, "") == 0 {
-    return nil
-  }
+	// If domain doesn't have SSL, return
+	if domain.SSLStatus == core.DomainSSLStatusNone || strings.Compare(domain.SSLFullChain, "") == 0 || strings.Compare(domain.SSLPrivateKey, "") == 0 {
+		return nil
+	}
 	// fetch all proxy servers
 	proxyServers, err := core.FetchProxyActiveServers(&m.ServiceManager.DbClient)
 	if err != nil {
@@ -189,8 +189,8 @@ func (m Manager) SSLProxyUpdate(request SSLProxyUpdateRequest, ctx context.Conte
 	if isFailed {
 		return domain.UpdateSSLStatus(ctx, dbWithoutTx, core.DomainSSLStatusFailed)
 	} else {
-    return domain.UpdateSSLStatus(ctx, dbWithoutTx, core.DomainSSLStatusIssued)
-  }
+		return domain.UpdateSSLStatus(ctx, dbWithoutTx, core.DomainSSLStatusIssued)
+	}
 }
 
 // private functions
