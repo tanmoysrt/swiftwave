@@ -116,12 +116,20 @@ func (r *mutationResolver) AddCustomSsl(ctx context.Context, id uint, input mode
 	// update record
 	record.SSLPrivateKey = input.PrivateKey
 	record.SSLFullChain = input.FullChain
-	record.SSLStatus = core.DomainSSLStatusIssued
+	record.SSLStatus = core.DomainSSLStatusPending
 	record.SslAutoRenew = false
 	err = record.Update(ctx, r.ServiceManager.DbClient)
 	if err != nil {
 		return nil, err
 	}
+  // push task
+  err = r.WorkerManager.EnqueueSSLProxyUpdateRequest(id)
+  if err != nil {
+    // rollback status
+    record.SSLStatus = core.DomainSSLStatusNone
+    _ = record.Update(ctx, r.ServiceManager.DbClient)
+    return nil, errors.New("failed to enqueue ssl proxy update request")
+  }
 	return domainToGraphqlObject(&record), nil
 }
 
